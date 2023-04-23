@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.csv
+*.png
+*.jpg
+*.jpeg
+*.json
+*.ini
+*.txt
+*.lock
+*.bak
+*.swp
+*.swo
+*.DS_Store
