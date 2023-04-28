@@ -15,6 +15,7 @@ This project is a proof-of-concept AI-driven service that can identify and class
 
 ## Usage
 
-1. Fetch the metadata and images: `python fetch_metadata.py`
-2. Prepare the dataset: `python prepare_dataset.py`
-3. Train the model: `python train_model.py`
+1. Fetch the metadata and images: `python3 fetch_metadata.py`
+2. Prepare the dataset: `python3 prepare_dataset.py`
+3. Train the model: `python3 train_model.py`
+4. Predict attributes and generate JSON:`python3 predict.py`
