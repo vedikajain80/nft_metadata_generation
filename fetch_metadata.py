@@ -24,12 +24,12 @@ with open('metadata.json', 'r') as file:
 nfts = data['nfts']
 
 # Fetch assets from NFTPort API
-def fetch_assets(api_key, contract_address, chain='ethereum', page_size=50):
+def fetch_assets(api_key, contract_address, chain="ethereum", page_size=50):
     all_assets = []
 
     # Fetch the first page to get the total count of assets
 
-    url = "https://api.nftport.xyz/v0/nfts/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d?chain=ethereum&page_number=1&page_size=50&include=metadata&refresh_metadata=false"
+    url = f"https://api.nftport.xyz/v0/nfts/{contract_address}?chain={chain}&page_number=1&page_size={page_size}&include=metadata&refresh_metadata=false"
 
     headers = {
         "accept": "application/json",
@@ -54,7 +54,7 @@ def fetch_assets(api_key, contract_address, chain='ethereum', page_size=50):
 
         # Fetch the remaining pages
         for page_number in range(2, total_pages + 1):
-            url = f"https://api.nftport.xyz/v0/nfts/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d?chain=ethereum&page_number={page_number}&page_size=50&include=metadata&refresh_metadata=false"
+            url = f"https://api.nftport.xyz/v0/nfts/{contract_address}?chain=ethereum&page_number={page_number}&page_size={page_size}&include=metadata&refresh_metadata=false"
             response = requests.get(url, headers=headers)
 
             if response.status_code == 200:
@@ -81,9 +81,6 @@ def extract_metadata(nfts):
         traits = {trait['trait_type']: trait['value'] for trait in nft['metadata']['attributes']}
         metadata_list.append({'token_id': token_id, 'filename': filename, 'attributes': json.dumps(traits)})
 
-        # Print metadata for each asset
-        # print(f"Token ID: {token_id}")
-        # print(f"Filename: {filename}")
         print(f"Attributes: {json.dumps(traits)}")
         print("\n")
 

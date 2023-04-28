@@ -64,8 +64,6 @@ def main():
     with open('label_encoders.pkl', 'rb') as f:
         label_encoders = pickle.load(f)
     
-    print(label_encoders)
-
     # Load the model
     model = load_model(model_path)
 

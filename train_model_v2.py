@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import json
 import pickle
-from tensorflow.keras.applications import EfficientNetB0
 from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout
 from tensorflow.keras.models import Model
 from tensorflow.keras.applications import MobileNetV2
@@ -16,12 +15,24 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
-def preprocess_images_and_labels(metadata_file, img_dir, label_encoders=None, img_size=(224, 224)):
+def preprocess_images_and_labels(metadata_file, img_dir, label_encoders=None, img_size=(224, 224), train_attribute_names=None):
     metadata = pd.read_csv(metadata_file)
     num_samples = len(metadata)
     images = np.zeros((num_samples, img_size[0], img_size[1], 3))
     all_attribute_names = set()
     attributes_dict = {}
+
+    if train_attribute_names is None:
+        for i, row in metadata.iterrows():
+            attributes = json.loads(row['attributes'])
+            all_attribute_names.update(attributes.keys())
+    else:
+        all_attribute_names = train_attribute_names
+
+    
+    for attr_name in all_attribute_names:
+        attributes_dict[attr_name] = []
+
 
     for i, row in metadata.iterrows():
         img_path = os.path.join(img_dir, row['filename'])
@@ -29,14 +40,7 @@ def preprocess_images_and_labels(metadata_file, img_dir, label_encoders=None, im
         img_array = img_to_array(img)
         img_array = preprocess_input(img_array)
         images[i] = img_array
-
-        attributes = json.loads(row['attributes'])
-        all_attribute_names.update(attributes.keys())
-    
-    for attr_name in all_attribute_names:
-        attributes_dict[attr_name] = []
-    
-    for i, row in metadata.iterrows():
+        
         attributes = json.loads(row['attributes'])
         for attr_name in all_attribute_names:
             if attr_name in attributes:
@@ -96,7 +100,8 @@ def train_model():
     val_img_dir = os.path.join(val_dir, 'images')
 
     X_train, y_train_dict, num_classes_train, label_encoders = preprocess_images_and_labels(train_metadata_file, train_img_dir)
-    X_val, y_val_dict, _, _ = preprocess_images_and_labels(val_metadata_file, val_img_dir, label_encoders)
+    train_attribute_names = set(y_train_dict.keys())
+    X_val, y_val_dict, _, _ = preprocess_images_and_labels(val_metadata_file, val_img_dir, label_encoders, train_attribute_names = train_attribute_names)
 
     # Create and compile the model
     model = create_model(num_classes_train)
