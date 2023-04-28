@@ -95,7 +95,7 @@ def extract_metadata(nfts):
 if __name__ == '__main__':
     contract_address = "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d"  # BAYC contract address
     api_key = "ac5d347e-c8fb-4ab6-9455-2c6823776e3a"
-    assets = fetch_assets(contract_address, api_key)
+    assets = fetch_assets(api_key, contract_address)
     metadata_list = extract_metadata(assets)
     
     metadata_df = pd.DataFrame(metadata_list)
