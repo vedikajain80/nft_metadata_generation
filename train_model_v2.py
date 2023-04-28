@@ -15,19 +15,19 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
-def preprocess_images_and_labels(metadata_file, img_dir, label_encoders=None, img_size=(224, 224), train_attribute_names=None):
+def preprocess_images_and_labels(metadata_file, img_dir, label_encoders=None, img_size=(224, 224), num_classes_train=None):
     metadata = pd.read_csv(metadata_file)
     num_samples = len(metadata)
     images = np.zeros((num_samples, img_size[0], img_size[1], 3))
     all_attribute_names = set()
     attributes_dict = {}
 
-    if train_attribute_names is None:
+    if num_classes_train is None:
         for i, row in metadata.iterrows():
             attributes = json.loads(row['attributes'])
             all_attribute_names.update(attributes.keys())
     else:
-        all_attribute_names = train_attribute_names
+        all_attribute_names = num_classes_train.keys()
 
     
     for attr_name in all_attribute_names:
@@ -60,9 +60,13 @@ def preprocess_images_and_labels(metadata_file, img_dir, label_encoders=None, im
 
     for attr_name, attr_values in attributes_dict.items():
         integer_labels = label_encoders[attr_name].transform(attr_values)
-        one_hot_labels = to_categorical(integer_labels)
+        if num_classes_train is not None:
+            num_classes[attr_name] = num_classes_train[attr_name]
+            one_hot_labels = to_categorical(integer_labels, num_classes[attr_name])
+        else:
+            one_hot_labels = to_categorical(integer_labels)
+            num_classes[attr_name] = len(np.unique(integer_labels))
         one_hot_labels_dict[attr_name] = one_hot_labels
-        num_classes[attr_name] = len(np.unique(integer_labels))
 
     return images, one_hot_labels_dict, num_classes, label_encoders
 
@@ -78,7 +82,6 @@ def create_model(num_classes_dict):
 
     outputs = []
     for attr_name, num_classes in num_classes_dict.items():
-        print(attr_name)
         output = Dense(num_classes, activation='softmax', name=f'{attr_name}_output')(x)
         outputs.append(output)
 
@@ -89,7 +92,7 @@ def create_model(num_classes_dict):
 def train_model():
     train_dir = 'train'
     val_dir = 'val'
-    epochs = 15
+    epochs = 25
     learning_rate = 0.0001
     model_save_path = 'best_model.h5'
 
@@ -100,8 +103,7 @@ def train_model():
     val_img_dir = os.path.join(val_dir, 'images')
 
     X_train, y_train_dict, num_classes_train, label_encoders = preprocess_images_and_labels(train_metadata_file, train_img_dir)
-    train_attribute_names = set(y_train_dict.keys())
-    X_val, y_val_dict, _, _ = preprocess_images_and_labels(val_metadata_file, val_img_dir, label_encoders, train_attribute_names = train_attribute_names)
+    X_val, y_val_dict, _, _ = preprocess_images_and_labels(val_metadata_file, val_img_dir, label_encoders, num_classes_train=num_classes_train)
 
     # Create and compile the model
     model = create_model(num_classes_train)
@@ -152,4 +154,3 @@ if __name__ == '__main__':
 
     # Plot the training and validation losses and accuracies
     plot_history(history, num_classes)
-    print("finished")

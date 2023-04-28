@@ -16,13 +16,6 @@ if not os.path.exists(os.path.join('dataset', 'images')):
 if not os.path.exists(os.path.join('dataset', 'jsons')):
     os.makedirs(os.path.join('dataset', 'jsons'))
 
-# Load the JSON file
-with open('metadata.json', 'r') as file:
-    data = json.load(file)
-
-# Extract the 'nfts' list from the dictionary
-nfts = data['nfts']
-
 # Fetch assets from NFTPort API
 def fetch_assets(api_key, contract_address, chain="ethereum", page_size=50):
     all_assets = []
@@ -62,7 +55,7 @@ def fetch_assets(api_key, contract_address, chain="ethereum", page_size=50):
                 all_assets.extend(data['nfts'])
                 with open(os.path.join('dataset', 'jsons', f'page_{page_number}.json'), 'w') as outfile:
                     json.dump(data, outfile)
-                print("page_number")
+                print(page_number)
 
             else:
                 print(f"Error fetching assets (page {page_number}): {response.status_code}")

@@ -42,7 +42,7 @@ def split_dataset(dataset_dir, train_dir, val_dir, test_dir, split_ratio=(0.7, 0
             dest = os.path.join(val_dir, 'images', row['filename'])
         else:
             dest = os.path.join(test_dir, 'images', row['filename'])
-        shutil.copy(src, dest)
+        shutil.move(src, dest)
 
 if __name__ == '__main__':
     dataset_dir = 'dataset'

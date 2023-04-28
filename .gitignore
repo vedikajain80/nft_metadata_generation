@@ -10,7 +10,6 @@ __pycache__/
 *.jpeg
 *.json
 *.ini
-*.txt
 *.lock
 *.bak
 *.swp

@@ -1,0 +1,9 @@
+torch
+torchvision
+numpy
+pandas
+opencv-python
+requests
+tensorflow==2.12.0
+scikit-learn==1.2.2
+matplotlib==3.7.1
