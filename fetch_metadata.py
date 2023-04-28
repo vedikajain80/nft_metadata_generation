@@ -26,13 +26,12 @@ def fetch_assets(api_key, contract_address, chain="ethereum", page_size=50):
 
     headers = {
         "accept": "application/json",
-        "Authorization": "ac5d347e-c8fb-4ab6-9455-2c6823776e3a"
+        "Authorization": api_key
     }
 
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
-        print("yes")
         data = response.json()
         total_count = data['total']
         all_assets.extend(data['nfts'])
@@ -43,7 +42,7 @@ def fetch_assets(api_key, contract_address, chain="ethereum", page_size=50):
         with open(os.path.join('dataset', 'jsons', f'page_1.json'), 'w') as outfile:
             json.dump(data, outfile)
 
-        print(total_pages)
+        print(f"fetching {total_pages} pages")
 
         # Fetch the remaining pages
         for page_number in range(2, total_pages + 1):
@@ -55,7 +54,7 @@ def fetch_assets(api_key, contract_address, chain="ethereum", page_size=50):
                 all_assets.extend(data['nfts'])
                 with open(os.path.join('dataset', 'jsons', f'page_{page_number}.json'), 'w') as outfile:
                     json.dump(data, outfile)
-                print(page_number)
+                print(f"page number: {page_number}")
 
             else:
                 print(f"Error fetching assets (page {page_number}): {response.status_code}")
@@ -66,7 +65,8 @@ def fetch_assets(api_key, contract_address, chain="ethereum", page_size=50):
     return all_assets
 
 # Extract relevant information
-def extract_metadata(nfts):
+def extract_metadata(nfts, verbose=False):
+    print("extracting metadata")
     metadata_list = []
     for nft in nfts:
         token_id = nft['token_id']
@@ -74,20 +74,23 @@ def extract_metadata(nfts):
         traits = {trait['trait_type']: trait['value'] for trait in nft['metadata']['attributes']}
         metadata_list.append({'token_id': token_id, 'filename': filename, 'attributes': json.dumps(traits)})
 
-        print(f"Attributes: {json.dumps(traits)}")
-        print("\n")
+        if verbose:
+            print(f"Attributes: {json.dumps(traits)}")
+            print("\n")
 
         # Download and save image
         image_url = nft['cached_file_url']
         response = requests.get(image_url, stream=True)
         with open(os.path.join('dataset', 'images', filename), 'wb') as out_file:
             shutil.copyfileobj(response.raw, out_file)
+            
     return metadata_list
 
 
 if __name__ == '__main__':
     contract_address = "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d"  # BAYC contract address
     api_key = "ac5d347e-c8fb-4ab6-9455-2c6823776e3a"
+    
     assets = fetch_assets(api_key, contract_address)
     metadata_list = extract_metadata(assets)
     
