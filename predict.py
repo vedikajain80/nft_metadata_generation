@@ -51,9 +51,9 @@ def generate_erc721_metadata(predicted_attributes, image_url):
     return metadata
 
 def main():
-    model_path = 'best_model_Crystals.h5'
-    test_dir = 'test_Crystals'
-    saved_label_encoders = 'label_encoders_Crystals.pkl'
+    model_path = 'best_model_BAYC.h5'
+    test_dir = 'test_BAYC'
+    saved_label_encoders = 'label_encoders_BAYC.pkl'
 
     # Load the model
     model = load_model(model_path)
