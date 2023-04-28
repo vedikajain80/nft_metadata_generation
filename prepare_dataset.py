@@ -12,9 +12,6 @@ def split_dataset(dataset_dir, train_dir, val_dir, test_dir, split_ratio=(0.7, 0
     # Read metadata.csv
     metadata = pd.read_csv(os.path.join(dataset_dir, 'metadata.csv'))
 
-    # Extract the 'background' attribute from the 'attributes' column
-    metadata['background'] = metadata['attributes'].apply(lambda x: json.loads(x).get('Background'))
-
     # Shuffle the dataset
     metadata = metadata.sample(frac=1).reset_index(drop=True)
 
