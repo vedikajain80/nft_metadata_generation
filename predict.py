@@ -10,7 +10,7 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 def get_random_test_image_path(test_dir):
     test_metadata = pd.read_csv(os.path.join(test_dir, 'metadata.csv'))
-    random_image_filename = random.choice(test_metadata['filename'].tolist())
+    random_image_filename = "3444.png"
     return os.path.join(test_dir, 'images', random_image_filename)
 
 def predict_attributes(model, image_path, label_encoders):
@@ -51,13 +51,24 @@ def generate_erc721_metadata(predicted_attributes, image_url):
     return metadata
 
 def main():
+    test_dir = 'test'
+
+    collection = input("1 for FVCKCRYSTALS, 2 for BAYC, 3 for Collection trained from scratch: ").strip()
+
+    # default is BAYC
     model_path = 'best_model_BAYC.h5'
-    test_dir = 'test_BAYC'
     saved_label_encoders = 'label_encoders_BAYC.pkl'
 
-    # Load the model
-    model = load_model(model_path)
-    
+    # FVCKCRYSTALS
+    if(collection == "1"):
+        model_path = 'best_model_CRYSTALS.h5'
+        saved_label_encoders = 'label_encoders_CRYSTALS.pkl'
+
+    # collection trained from scratch
+    if(collection == "3"):
+        model_path = 'best_model.h5'
+        saved_label_encoders = 'label_encoders.pkl'
+
     # Get a random image path from the test set
     img_path = get_random_test_image_path(test_dir)
 
@@ -66,6 +77,9 @@ def main():
 
     print("image_filename:", image_filename)
 
+    # Load the model
+    model = load_model(model_path)
+    
     with open(saved_label_encoders, 'rb') as f:
         label_encoders = pickle.load(f)
 

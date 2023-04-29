@@ -13,6 +13,8 @@ This project is a proof-of-concept AI-driven service that can identify and class
    - On Windows: `.\venv\Scripts\activate`
 6. Install dependencies: `pip install -r requirements.txt`
 
+-- This setup process for virtual env and dependencies may look different if using Mac M1 chip.
+
 ## Usage
 
 1. Fetch the metadata and images: `python3 fetch_metadata.py`
@@ -20,18 +22,15 @@ This project is a proof-of-concept AI-driven service that can identify and class
 3. Train the model: `python3 train_model.py`
 4. Predict attributes and generate JSON:`python3 predict.py`
 
-## Test Model against BAYC collection
-1. unzip test_BAYC.zip folder to get images to test: `unzip test_BAYC.zip`
+## Test saved model against FVCKCRYSTAL/BAYC
+
+1. generate test file for specific contract address: `python3 generate_test_set.py` 
 2. Predict attributes and generate JSON:`python3 predict.py`
 
-## Test Model against FVCKCRYSTAL
-1. download images to test file: `python3 generate_test_set.py`
-2. go to predict.py and change lines 54-56 to 
+## Results 
 
-   ```
-   model_path = 'best_model_crystals_v2.h5'
-   test_dir = 'test_Crystals'
-   saved_label_encoders = 'label_encoders_Crystals.pkl'
-   ```
+The accuracy and loss graphs for training and validation sets can be found in the results folder
 
-2. Predict attributes and generate JSON:`python3 predict.py`
+## Places for improvement 
+
+downloading all the images 
