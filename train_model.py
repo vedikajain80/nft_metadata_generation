@@ -7,7 +7,7 @@ import json
 import pickle
 from concurrent.futures import ThreadPoolExecutor
 from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import Model,load_model
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint
@@ -16,25 +16,23 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
+def load_pickle(filename):
+    with open(filename, 'rb') as f:
+        return pickle.load(f)
+
 def preprocess_image(img_path, target_size):
     img = load_img(img_path, target_size=target_size)
     img_array = img_to_array(img)
     img_array = preprocess_input(img_array)
     return img_array
 
-def preprocess_images_and_labels(metadata_file, img_dir, label_encoders=None, img_size=(224, 224), num_classes_train=None):
+def preprocess_images_and_labels(metadata_file, img_dir, label_encoders, num_classes_train, img_size=(224, 224)):
     metadata = pd.read_csv(metadata_file)
     num_samples = len(metadata)
-    images = np.zeros((num_samples, img_size[0], img_size[1], 3))
     all_attribute_names = set()
     attributes_dict = {}
 
-    if num_classes_train is None:
-        for i, row in metadata.iterrows():
-            attributes = json.loads(row['attributes'])
-            all_attribute_names.update(attributes.keys())
-    else:
-        all_attribute_names = num_classes_train.keys()
+    all_attribute_names = num_classes_train.keys()
 
     for attr_name in all_attribute_names:
         attributes_dict[attr_name] = []
@@ -52,28 +50,14 @@ def preprocess_images_and_labels(metadata_file, img_dir, label_encoders=None, im
             else:
                 attributes_dict[attr_name].append("absent")
 
-    if label_encoders is None:
-        label_encoders = {attr_name: LabelEncoder() for attr_name in all_attribute_names}
-        for attr_name, attr_values in attributes_dict.items():
-            label_encoders[attr_name].fit(attr_values)
-        with open('label_encoders.pkl', 'wb') as f:
-            pickle.dump(label_encoders, f)
-
     one_hot_labels_dict = {}
-    num_classes = {}
-
+    
     for attr_name, attr_values in attributes_dict.items():
         integer_labels = label_encoders[attr_name].transform(attr_values)
-        if num_classes_train is not None:
-            num_classes[attr_name] = num_classes_train[attr_name]
-            one_hot_labels = to_categorical(integer_labels, num_classes[attr_name])
-        else:
-            one_hot_labels = to_categorical(integer_labels)
-            num_classes[attr_name] = len(np.unique(integer_labels))
-
+        one_hot_labels = to_categorical(integer_labels, num_classes_train[attr_name])
         one_hot_labels_dict[attr_name] = one_hot_labels
 
-    return images, one_hot_labels_dict, num_classes, label_encoders
+    return images, one_hot_labels_dict
 
 
 def create_model(num_classes_dict):
@@ -97,7 +81,7 @@ def create_model(num_classes_dict):
 def train_model():
     train_dir = 'train'
     val_dir = 'val'
-    epochs = 12
+    epochs = 25
     learning_rate = 0.0001
     model_save_path = 'best_model.h5'
 
@@ -106,12 +90,19 @@ def train_model():
     train_img_dir = os.path.join(train_dir, 'images')
     val_metadata_file = os.path.join(val_dir, 'metadata.csv')
     val_img_dir = os.path.join(val_dir, 'images')
+     
+    label_encoders = load_pickle('label_encoders.pkl')
+    num_classes_train = load_pickle('num_classes_train.pkl')
 
-    X_train, y_train_dict, num_classes_train, label_encoders = preprocess_images_and_labels(train_metadata_file, train_img_dir)
-    X_val, y_val_dict, _, _ = preprocess_images_and_labels(val_metadata_file, val_img_dir, label_encoders, num_classes_train=num_classes_train)
+    X_train, y_train_dict = preprocess_images_and_labels(train_metadata_file, train_img_dir, label_encoders, num_classes_train)
+    X_val, y_val_dict = preprocess_images_and_labels(val_metadata_file, val_img_dir, label_encoders, num_classes_train)
+
+    # Load model
+    # model = load_model(model_save_path)
 
     # Create and compile the model
     model = create_model(num_classes_train)
+
     model.compile(optimizer=Adam(learning_rate=learning_rate),
                   loss={f'{attr_name}_output': 'categorical_crossentropy' for attr_name in num_classes_train},
                   metrics=['accuracy'])
@@ -119,7 +110,6 @@ def train_model():
     checkpoint = ModelCheckpoint(model_save_path, monitor='val_loss', verbose=1, save_best_only=True)
 
     # Train the model
-    print("begin training")
     history = model.fit(X_train, {f'{attr_name}_output': y_train_dict[attr_name] for attr_name in y_train_dict},
                         epochs=epochs,
                         batch_size=32,

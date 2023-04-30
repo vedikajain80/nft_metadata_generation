@@ -8,22 +8,26 @@ from sklearn.metrics import classification_report
 from train_model import preprocess_images_and_labels
 
 # Load the label encoders
-saved_label_encoders = 'label_encoders_BAYC.pkl'  # Update the path based on the desired collection
+saved_label_encoders = 'label_encoders.pkl'  # Update the path based on the desired collection
 with open(saved_label_encoders, 'rb') as f:
     label_encoders = pickle.load(f)
 
+saved_label_encoders = 'num_classes_train.pkl'  # Update the path based on the desired collection
+with open(saved_label_encoders, 'rb') as f:
+    num_classes_train = pickle.load(f)
+
 # Load the test metadata
-test_dir = 'test_BAYC'
+test_dir = 'test'
 test_metadata_file = os.path.join(test_dir, 'metadata.csv')
 test_img_dir = os.path.join(test_dir, 'images')
 
 # Preprocess the test images and labels
-test_images, test_one_hot_labels_dict, _, _ = preprocess_images_and_labels(
-    test_metadata_file, test_img_dir, label_encoders=label_encoders, img_size=(224, 224)
+test_images, test_one_hot_labels_dict = preprocess_images_and_labels(
+    test_metadata_file, test_img_dir, label_encoders, num_classes_train
 )
 
 # Load the trained model
-model_path = 'best_model_BAYC.h5'  # Update the model path based on the desired collection
+model_path = 'best_model.h5'  # Update the model path based on the desired collection
 model = load_model(model_path)
 
 # Evaluate the model on the test set

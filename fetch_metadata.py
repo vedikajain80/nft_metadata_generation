@@ -17,7 +17,7 @@ if not os.path.exists(os.path.join('dataset', 'jsons')):
     os.makedirs(os.path.join('dataset', 'jsons'))
 
 # Fetch assets from NFTPort API
-def fetch_assets(api_key, contract_address, chain="ethereum", page_size=50):
+def fetch_assets(api_key, contract_address, chain="ethereum", page_size=50, count=10000):
     all_assets = []
 
     # Fetch the first page to get the total count of assets
@@ -33,7 +33,7 @@ def fetch_assets(api_key, contract_address, chain="ethereum", page_size=50):
 
     if response.status_code == 200:
         data = response.json()
-        total_count = data['total']
+        total_count = min(count, data['total'])
         all_assets.extend(data['nfts'])
 
         #Calculate the total number of pages
@@ -65,30 +65,30 @@ def fetch_assets(api_key, contract_address, chain="ethereum", page_size=50):
     return all_assets
 
 # Extract relevant information
-def extract_metadata(nfts, verbose=False):
+def extract_metadata(nfts):
     print("extracting metadata")
     metadata_list = []
     for nft in nfts:
         token_id = nft['token_id']
         filename = f"{token_id}.png"
         traits = {trait['trait_type']: trait['value'] for trait in nft['metadata']['attributes']}
-        metadata_list.append({'token_id': token_id, 'filename': filename, 'attributes': json.dumps(traits)})
-
-        if verbose:
-            print(f"Attributes: {json.dumps(traits)}")
-            print("\n")
+        file_path = os.path.join('dataset', 'images', filename)
 
         # Download and save image
         image_url = nft['cached_file_url']
-        response = requests.get(image_url, stream=True)
-        with open(os.path.join('dataset', 'images', filename), 'wb') as out_file:
-            shutil.copyfileobj(response.raw, out_file)
+        if image_url is not None:
+            response = requests.get(image_url, stream=True)
+            with open(os.path.join('dataset', 'images', filename), 'wb') as out_file:
+                shutil.copyfileobj(response.raw, out_file)
+            metadata_list.append({'token_id': token_id, 'filename': filename, 'attributes': json.dumps(traits)})
+        else:
+            print(f"Error: Image URL is missing for token_id {token_id}")
             
     return metadata_list
 
 
 if __name__ == '__main__':
-    contract_address = "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d"  # BAYC contract address
+    contract_address = "0x7AfEdA4c714e1C0A2a1248332c100924506aC8e6"  
     api_key = "ac5d347e-c8fb-4ab6-9455-2c6823776e3a"
     
     assets = fetch_assets(api_key, contract_address)
