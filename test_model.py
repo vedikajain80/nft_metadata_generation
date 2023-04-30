@@ -12,8 +12,8 @@ saved_label_encoders = 'label_encoders.pkl'  # Update the path based on the desi
 with open(saved_label_encoders, 'rb') as f:
     label_encoders = pickle.load(f)
 
-saved_label_encoders = 'num_classes_train.pkl'  # Update the path based on the desired collection
-with open(saved_label_encoders, 'rb') as f:
+saved_classes = 'num_classes_train.pkl'  # Update the path based on the desired collection
+with open(saved_classes, 'rb') as f:
     num_classes_train = pickle.load(f)
 
 # Load the test metadata
