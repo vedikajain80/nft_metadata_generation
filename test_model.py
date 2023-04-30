@@ -35,8 +35,8 @@ test_pred = model.predict(test_images)
 
 # Print evaluation metrics for each attribute
 for i, attr_name in enumerate(label_encoders.keys()):
-    y_true = np.argmax(test_one_hot_labels_dict[attr_name], axis=1)
-    y_pred = np.argmax(test_pred[i], axis=1)
+    y_true = label_encoders[attr_name].inverse_transform(np.argmax(test_one_hot_labels_dict[attr_name], axis=1))
+    y_pred = label_encoders[attr_name].inverse_transform(np.argmax(test_pred[i], axis=1))
     with open(f"{os.path.splitext(os.path.basename(model_path))[0]}_evaluation.txt", "a") as eval_file:
         eval_file.write(f"Evaluation for attribute: {attr_name}\n")
         eval_file.write(classification_report(y_true, y_pred, zero_division=0))

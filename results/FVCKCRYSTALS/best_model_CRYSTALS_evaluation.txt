@@ -1,0 +1,133 @@
+Evaluation for attribute: Form
+              precision    recall  f1-score   support
+
+     Cathode       1.00      1.00      1.00        17
+    Circular       1.00      1.00      1.00         2
+       Cubic       1.00      1.00      1.00        20
+      Cylmin       1.00      1.00      1.00        43
+     Diamond       1.00      1.00      1.00        38
+   Elemental       1.00      1.00      1.00        13
+        Erat       1.00      1.00      1.00        53
+      Eroded       1.00      1.00      1.00        23
+        Hand       1.00      1.00      1.00         1
+       Lunar       1.00      1.00      1.00        54
+     Pyramid       1.00      1.00      1.00        30
+       Solar       1.00      1.00      1.00        61
+      T_90_0       1.00      1.00      1.00        56
+   Wireframe       1.00      1.00      1.00         5
+
+    accuracy                           1.00       416
+   macro avg       1.00      1.00      1.00       416
+weighted avg       1.00      1.00      1.00       416
+
+
+Evaluation for attribute: Core
+              precision    recall  f1-score   support
+
+        Atom       1.00      1.00      1.00        39
+   Chainlink       1.00      1.00      1.00        17
+      Chains       1.00      1.00      1.00        27
+       Cloud       1.00      1.00      1.00        13
+       Given       1.00      1.00      1.00         2
+        Hand       1.00      1.00      1.00        32
+        Head       1.00      0.97      0.99        35
+    Infected       1.00      1.00      1.00         1
+    Koi Fish       0.92      1.00      0.96        11
+        Lock       1.00      1.00      1.00        26
+         Orb       1.00      1.00      1.00        30
+        Path       1.00      1.00      1.00        14
+     Rebirth       1.00      1.00      1.00         3
+        Ring       1.00      1.00      1.00        23
+    Scorpion       1.00      1.00      1.00        25
+      Smiley       1.00      1.00      1.00        27
+       Snake       1.00      1.00      1.00        26
+      Spider       1.00      1.00      1.00        20
+    Strength       1.00      1.00      1.00         4
+Twisted Rose       1.00      1.00      1.00        33
+    Wishbone       1.00      1.00      1.00         8
+
+    accuracy                           1.00       416
+   macro avg       1.00      1.00      1.00       416
+weighted avg       1.00      1.00      1.00       416
+
+
+Evaluation for attribute: Handmade
+              precision    recall  f1-score   support
+
+        True       1.00      1.00      1.00         1
+      absent       1.00      1.00      1.00       415
+
+    accuracy                           1.00       416
+   macro avg       1.00      1.00      1.00       416
+weighted avg       1.00      1.00      1.00       416
+
+
+Evaluation for attribute: Material
+                precision    recall  f1-score   support
+
+Black Titanium       0.97      0.99      0.98        89
+        Bronze       0.98      0.99      0.99       101
+       Ceramic       1.00      1.00      1.00        37
+     Chameleon       1.00      0.95      0.97        37
+         Glass       1.00      0.88      0.93         8
+          Gold       0.93      0.97      0.95        29
+      Infected       1.00      1.00      1.00         1
+      Obsidian       1.00      1.00      1.00         5
+        Silver       0.98      0.97      0.98       109
+
+      accuracy                           0.98       416
+     macro avg       0.98      0.97      0.98       416
+  weighted avg       0.98      0.98      0.98       416
+
+
+Evaluation for attribute: Tone
+              precision    recall  f1-score   support
+
+    Amethyst       1.00      1.00      1.00        62
+  Black void       1.00      1.00      1.00        15
+     Emerald       1.00      1.00      1.00        66
+     Frosted       1.00      1.00      1.00        30
+  Iridescent       0.96      1.00      0.98        27
+    Lavender       1.00      1.00      1.00        60
+       Milky       1.00      1.00      1.00         1
+        Pink       1.00      0.98      0.99        54
+         Red       0.98      0.98      0.98        66
+      Yellow       1.00      1.00      1.00        20
+      absent       1.00      1.00      1.00        15
+
+    accuracy                           1.00       416
+   macro avg       1.00      1.00      1.00       416
+weighted avg       1.00      1.00      1.00       416
+
+
+Evaluation for attribute: Collection
+                precision    recall  f1-score   support
+
+FVCK_CRYSTAL//       1.00      1.00      1.00       416
+
+      accuracy                           1.00       416
+     macro avg       1.00      1.00      1.00       416
+  weighted avg       1.00      1.00      1.00       416
+
+
+Evaluation for attribute: Aura
+                    precision    recall  f1-score   support
+
+            Aurora       1.00      0.94      0.97        17
+            Chains       0.97      1.00      0.99        33
+Connected Crystals       1.00      0.83      0.91         6
+    Connected Halo       1.00      1.00      1.00        10
+    Connected Orbs       1.00      1.00      1.00        19
+  Crystalized Orbs       1.00      1.00      1.00        16
+            Energy       1.00      0.91      0.95        22
+ Floating Crystals       1.00      1.00      1.00        24
+              Halo       1.00      1.00      1.00        13
+            Nugget       1.00      1.00      1.00         3
+              Orbs       1.00      1.00      1.00        67
+            absent       0.98      1.00      0.99       186
+
+          accuracy                           0.99       416
+         macro avg       1.00      0.97      0.98       416
+      weighted avg       0.99      0.99      0.99       416
+
+
