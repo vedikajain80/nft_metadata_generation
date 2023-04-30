@@ -20,11 +20,12 @@ This project is a proof-of-concept AI-driven service that can identify and class
 1. Fetch the metadata and images: `python3 fetch_metadata.py`
 2. Prepare the dataset: `python3 prepare_dataset.py`
 3. Train the model: `python3 train_model.py`
-4. Predict attributes and generate JSON:`python3 predict.py`
+4. Test the mode: `python3 test_model.py`
+4. Predict attributes and generate JSON (3 as user input when asked):`python3 predict.py`
 
-## Test saved model against FVCKCRYSTAL/BAYC
+## Predict attributes of an image using saved model - FVCKCRYSTAL/BAYC
 
-1. generate test file for specific contract address: `python3 generate_test_set.py` 
+1. generate image file for specific contract address: `python3 generate_test_set.py` 
 2. Predict attributes and generate JSON:`python3 predict.py`
 
 ## Results 

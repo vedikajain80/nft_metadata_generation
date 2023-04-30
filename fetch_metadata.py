@@ -21,7 +21,6 @@ def fetch_assets(api_key, contract_address, chain="ethereum", page_size=50, coun
     all_assets = []
 
     # Fetch the first page to get the total count of assets
-
     url = f"https://api.nftport.xyz/v0/nfts/{contract_address}?chain={chain}&page_number=1&page_size={page_size}&include=metadata&refresh_metadata=false"
 
     headers = {
